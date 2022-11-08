@@ -13,32 +13,44 @@ fcID = data['Results'][0]['ID']
 #print(data)
 print("Free Company ID: " + fcID + "\n")
 
-#Retrieve FC Information
+#Retrieve a list of members from the FC, from the Lodestone
 request = urllib2.Request("https://xivapi.com/freecompany/" + fcID + "?data=FCM")
 request.add_header('User-Agent', '&lt;User-Agent&gt;')
-data = json.loads(urllib2.urlopen(request).read())
+FCMembers = json.loads(urllib2.urlopen(request).read())['FreeCompanyMembers']
 
 #print(json.dumps(data, indent=2))
 
 #Set up a Dataframe to hold players
-playerList = pd.DataFrame(columns = ['Name', 'Server', 'ID'])
+playerList = pd.DataFrame(columns = ['ID', 'Name', 'Nameday', 'Diety', 'Race', 'Gender', 'FC', 'AvatarImg', 'Server'])
 
-#Access all members of the FC
-for x in range(len(data['FreeCompanyMembers'])):
-
-    playerName = data['FreeCompanyMembers'][x]['Name']
-    playerServer = data['FreeCompanyMembers'][x]['Server']
+#For all FC Members...
+for x in range(len(FCMembers)):
+    #Get their character ID
     playerID = data['FreeCompanyMembers'][x]['ID']
 
-    newRow = pd.DataFrame({'Name': playerName, 'Server': playerServer, 'ID': playerID}, index = [0])
-
-    playerList = pd.concat([playerList, newRow], ignore_index = True)
-    print(playerName + ' added')
-
-    #Retrieve information for the member
+    #Retrieve their Lodedstone Data
     request = urllib2.Request("https://xivapi.com/character/" + str(playerID))
     request.add_header('User-Agent', '&lt;User-Agent&gt;')
     playerData = json.loads(urllib2.urlopen(request).read())
-    print(json.dumps(playerData, indent=2))
+    #print(json.dumps(playerData, indent=2))
 
+    #Extract desired information
+    playerName = playerData['Character']['Name']
+    playerNameday = playerData['Character']['Nameday']
+    playerDiety = playerData['Character']['GuardianDeity']
+    playerRace = playerData['Character']['Race']
+    playerGender = playerData['Character']['Gender']
+    playerFC = playerData['Character']['FreeCompanyName']
+    playerImg = playerData['Character']['Portrait']
+    playerServer = playerData['Character']['Server']
+
+    #Create a new row of data with that information
+    newRow = pd.DataFrame({'ID':playerID, 'Name':playerName, 'Nameday':playerNameday, 'Diety':playerDiety, 'Race':playerRace, 'Gender':playerGender, 'FC':playerFC, 'AvatarImg':playerImg, 'Server':playerServer}, index = [0])
+
+    #Add this row to the main player list
+    playerList = pd.concat([playerList, newRow], ignore_index = True)
+    
+    print(playerName + ' added')
+
+pd.options.display.max_colwidth = 200
 print(playerList)
