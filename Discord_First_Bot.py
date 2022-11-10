@@ -44,5 +44,5 @@ async def on_message(message):
         await message.channel.send(random.choice(starter_encouragements))
 
 
-token = 'MTAzOTc1NzQwNjUxNjgwOTgwOQ.GABVrA.Gz9aydKwc9RWkpzEl8svTvlClrWNw8qtt1Ccto'
+token = ''
 client.run(token)
