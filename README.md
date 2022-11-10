@@ -1,2 +1,1 @@
-# TyymBot
-Personal Project to learn how to create Discord Bots; A way to reference FFXIV characters within a server
+A test repo to put random things I test out with Python development.
