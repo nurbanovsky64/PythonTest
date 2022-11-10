@@ -2,6 +2,7 @@ import discord
 import requests
 import json
 import random
+from io import BytesIO
 
 #Client setup
 intents = discord.Intents.all()
@@ -80,6 +81,18 @@ async def on_message(message):
         else:
             encouraging[0] = False
             await message.channel.send("Encouragement is off!")
+
+    #Sends an image denoting cringe has occurred
+    #(Testing sending from a local image file)
+    if msg.startswith('$cringe'):
+        await message.channel.send(file=discord.File('cringeLala.jpg'))
+
+    #Sends an image from Eorzea Collection
+    #(Testing sending from a url image file)
+    if msg.startswith('$fashion'):
+        image = BytesIO(requests.get('https://glamours.eorzeacollection.com/192258/cover-0-1666765483.png').content)
+        await message.channel.send(file=discord.File(image, "fashion.png"))
+
 
 token = ''
 client.run(token)
